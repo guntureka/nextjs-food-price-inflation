@@ -46,14 +46,18 @@ export const foodPricesTable = pgTable(
     date: date("date", { mode: "date" }).notNull(),
     year: integer("year").notNull(),
     month: integer("month").notNull(),
-    foodId: uuid("food_id").references(() => foodsTable.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
-    countryId: uuid("country_id").references(() => countriesTable.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
+    foodId: uuid("food_id")
+      .references(() => foodsTable.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
+      .notNull(),
+    countryId: uuid("country_id")
+      .references(() => countriesTable.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
+      .notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
@@ -80,10 +84,12 @@ export const foodPriceIndexesTable = pgTable(
     date: date("date", { mode: "date" }).notNull(),
     year: integer("year").notNull(),
     month: integer("month").notNull(),
-    countryId: uuid("country_id").references(() => countriesTable.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
+    countryId: uuid("country_id")
+      .references(() => countriesTable.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
+      .notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at")
       .defaultNow()

@@ -12,23 +12,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { LoadingButton } from "../loading-button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { LoadingButton } from "@/components/loading-button";
 import { useState } from "react";
 import { toast } from "sonner";
-
-// const formSchema = z.object({
-//   open: z.number().or(z.string().pipe(z.number())),
-//   low: z.number().or(z.string().pipe(z.number())),
-//   high: z.number().or(z.string().pipe(z.number())),
-//   close: z.number().or(z.string().pipe(z.number())),
-//   date: z.date(),
-//   year: z.number(),
-//   month: z.number(),
-//   foodId: z.string(),
-//   countryId: z.string(),
-// });
+import { SelectFood } from "@/db/schema";
+import { updateFood } from "@/lib/actions/foods";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -37,11 +27,11 @@ const formSchema = z.object({
 
 type formValues = z.infer<typeof formSchema>;
 
-interface UpdateFoodForm {
-  food: any;
+interface UpdateFoodFormProps {
+  food: SelectFood;
 }
 
-export function UpdateFoodForm({ food }: UpdateFoodForm) {
+export function UpdateFoodForm({ food }: UpdateFoodFormProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<formValues>({
@@ -54,52 +44,51 @@ export function UpdateFoodForm({ food }: UpdateFoodForm) {
 
   const onSubmit = async (values: formValues) => {
     setIsLoading(true);
-    console.log(values);
-    toast.success("Success");
-    setIsLoading(false);
+    try {
+      await updateFood(food.id, values);
+
+      toast.success("Succes");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Error", { description: error.message });
+      } else {
+        toast.error("Error", { description: "Something wen't wrong." });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div
-      className={cn(
-        "relative flex min-h-svh w-full flex-col items-center justify-center",
-      )}
-    >
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className={cn(
-            "flex min-h-svh w-full max-w-4xl flex-col items-center justify-center space-y-4",
-          )}
-        >
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-8")}>
+        <div className="flex w-full flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold text-primary">Update Food</h1>
+        </div>
+
+        {(["name", "description"] as const).map((name, i) => (
           <FormField
-            name="name"
+            key={i}
+            name={name}
             control={form.control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="capitalize">{field.name}</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Banana" {...field} />
+                  {name == "description" ? (
+                    <Textarea placeholder="Banana is ..." {...field} />
+                  ) : (
+                    <Input type="text" placeholder="Banana" {...field} />
+                  )}
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
-            name="description"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="capitalize">{field.name}</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Banana is ..." {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <LoadingButton isLoading={isLoading}>Submit</LoadingButton>
-        </form>
-      </Form>
-    </div>
+        ))}
+
+        <LoadingButton isLoading={isLoading}>Submit</LoadingButton>
+      </form>
+    </Form>
   );
 }

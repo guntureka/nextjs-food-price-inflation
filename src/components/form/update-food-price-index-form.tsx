@@ -28,8 +28,12 @@ import { Button } from "../ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { format, getYear, setYear } from "date-fns";
-import { SelectCountry, SelectFood } from "@/db/schema";
+import { SelectCountry, SelectFood, SelectFoodPriceIndex } from "@/db/schema";
 import { createFoodPrice } from "@/lib/actions/food-prices";
+import {
+  createFoodPriceIndex,
+  updateFoodPriceIndex,
+} from "@/lib/actions/food-price-indexes";
 
 const startYear = getYear(new Date()) - 100;
 const endYear = getYear(new Date());
@@ -47,45 +51,42 @@ const formSchema = z.object({
   date: z.date(),
   year: z.number(),
   month: z.number(),
-  foodId: z.string().min(1, "Food is required"),
   countryId: z.string().min(1, "Country is required"),
 });
 
 type formValues = z.infer<typeof formSchema>;
 
-interface CreateFoodPriceFormProps {
-  foods: SelectFood[];
+interface UpdateFoodPriceFormProps {
   countries: SelectCountry[];
+  foodPriceIndex: SelectFoodPriceIndex;
 }
 
-export function CreateFoodPriceForm({
-  foods,
+export function UpdateFoodPriceIndexForm({
   countries,
-}: CreateFoodPriceFormProps) {
+  foodPriceIndex,
+}: UpdateFoodPriceFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState<Date>(new Date());
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      open: undefined,
-      low: undefined,
-      high: undefined,
-      close: undefined,
-      date: new Date(),
-      year: new Date().getFullYear(),
-      month: new Date().getMonth(),
-      foodId: "",
-      countryId: "",
+      open: foodPriceIndex.open ?? undefined,
+      low: foodPriceIndex.low ?? undefined,
+      high: foodPriceIndex.high ?? undefined,
+      close: foodPriceIndex.close ?? undefined,
+      date: foodPriceIndex.date,
+      year: foodPriceIndex.date.getFullYear(),
+      month: foodPriceIndex.date.getMonth(),
+      countryId: foodPriceIndex.countryId,
     },
   });
 
   const onSubmit = async (values: formValues) => {
     setIsLoading(true);
     try {
-      await createFoodPrice(values);
+      await updateFoodPriceIndex(foodPriceIndex.id, values);
 
-      form.reset();
       toast.success("Succes");
     } catch (error) {
       if (error instanceof Error) {
@@ -115,7 +116,7 @@ export function CreateFoodPriceForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-8")}>
         <div className="flex w-full flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold text-primary">Create Food Price</h1>
+          <h1 className="text-2xl font-bold text-primary">Update Food Price</h1>
         </div>
         <FormField
           name={"countryId"}
@@ -130,30 +131,6 @@ export function CreateFoodPriceForm({
                   </SelectTrigger>
                   <SelectContent>
                     {countries.map((v, i) => (
-                      <SelectItem key={i} value={v.id} className="capitalize">
-                        {v.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name={"foodId"}
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="capitalize">Food</FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a food" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {foods.map((v, i) => (
                       <SelectItem key={i} value={v.id} className="capitalize">
                         {v.name}
                       </SelectItem>

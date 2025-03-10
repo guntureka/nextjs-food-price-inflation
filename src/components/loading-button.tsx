@@ -1,5 +1,3 @@
-"use client";
-
 import { VariantProps } from "class-variance-authority";
 import React from "react";
 import { Button, buttonVariants } from "./ui/button";

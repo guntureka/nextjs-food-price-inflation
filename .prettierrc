@@ -3,5 +3,5 @@
   "trailingComma": "all",
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./src/app/globals.css",
-  "tailwindFunctions": ["clsx"]
+  "tailwindFunctions": ["clsx", "cva"]
 }

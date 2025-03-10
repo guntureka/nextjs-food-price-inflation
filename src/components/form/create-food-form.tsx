@@ -12,23 +12,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { LoadingButton } from "../loading-button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { LoadingButton } from "@/components/loading-button";
 import { useState } from "react";
 import { toast } from "sonner";
-
-// const formSchema = z.object({
-//   open: z.number().or(z.string().pipe(z.number())),
-//   low: z.number().or(z.string().pipe(z.number())),
-//   high: z.number().or(z.string().pipe(z.number())),
-//   close: z.number().or(z.string().pipe(z.number())),
-//   date: z.date(),
-//   year: z.number(),
-//   month: z.number(),
-//   foodId: z.string(),
-//   countryId: z.string(),
-// });
+import { createFood } from "@/lib/actions/foods";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -50,9 +39,20 @@ export function CreateFoodForm() {
 
   const onSubmit = async (values: formValues) => {
     setIsLoading(true);
-    console.log(values);
-    toast.success("Success");
-    setIsLoading(false);
+    try {
+      await createFood(values);
+
+      form.reset();
+      toast.success("Succes");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Error", { description: error.message });
+      } else {
+        toast.error("Error", { description: "Something wen't wrong." });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -61,31 +61,28 @@ export function CreateFoodForm() {
         <div className="flex w-full flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-primary">Create Food</h1>
         </div>
-        <FormField
-          name="name"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="capitalize">{field.name}</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Banana" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name="description"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="capitalize">{field.name}</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Banana is ..." {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+
+        {(["name", "description"] as const).map((name, i) => (
+          <FormField
+            key={i}
+            name={name}
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="capitalize">{field.name}</FormLabel>
+                <FormControl>
+                  {name == "description" ? (
+                    <Textarea placeholder="Banana is ..." {...field} />
+                  ) : (
+                    <Input type="text" placeholder="Banana" {...field} />
+                  )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))}
+
         <LoadingButton isLoading={isLoading}>Submit</LoadingButton>
       </form>
     </Form>

@@ -30,6 +30,7 @@ import { Calendar } from "../ui/calendar";
 import { format, getYear, setYear } from "date-fns";
 import { SelectCountry, SelectFood } from "@/db/schema";
 import { createFoodPrice } from "@/lib/actions/food-prices";
+import { createFoodPriceIndex } from "@/lib/actions/food-price-indexes";
 
 const startYear = getYear(new Date()) - 100;
 const endYear = getYear(new Date());
@@ -47,19 +48,16 @@ const formSchema = z.object({
   date: z.date(),
   year: z.number(),
   month: z.number(),
-  foodId: z.string().min(1, "Food is required"),
   countryId: z.string().min(1, "Country is required"),
 });
 
 type formValues = z.infer<typeof formSchema>;
 
 interface CreateFoodPriceFormProps {
-  foods: SelectFood[];
   countries: SelectCountry[];
 }
 
-export function CreateFoodPriceForm({
-  foods,
+export function CreateFoodPriceIndexForm({
   countries,
 }: CreateFoodPriceFormProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +73,6 @@ export function CreateFoodPriceForm({
       date: new Date(),
       year: new Date().getFullYear(),
       month: new Date().getMonth(),
-      foodId: "",
       countryId: "",
     },
   });
@@ -83,7 +80,7 @@ export function CreateFoodPriceForm({
   const onSubmit = async (values: formValues) => {
     setIsLoading(true);
     try {
-      await createFoodPrice(values);
+      await createFoodPriceIndex(values);
 
       form.reset();
       toast.success("Succes");
@@ -130,30 +127,6 @@ export function CreateFoodPriceForm({
                   </SelectTrigger>
                   <SelectContent>
                     {countries.map((v, i) => (
-                      <SelectItem key={i} value={v.id} className="capitalize">
-                        {v.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name={"foodId"}
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="capitalize">Food</FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a food" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {foods.map((v, i) => (
                       <SelectItem key={i} value={v.id} className="capitalize">
                         {v.name}
                       </SelectItem>

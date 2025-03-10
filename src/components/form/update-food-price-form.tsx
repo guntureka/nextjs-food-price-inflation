@@ -28,8 +28,8 @@ import { Button } from "../ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { format, getYear, setYear } from "date-fns";
-import { SelectCountry, SelectFood } from "@/db/schema";
-import { createFoodPrice } from "@/lib/actions/food-prices";
+import { SelectCountry, SelectFood, SelectFoodPrice } from "@/db/schema";
+import { updateFoodPrice } from "@/lib/actions/food-prices";
 
 const startYear = getYear(new Date()) - 100;
 const endYear = getYear(new Date());
@@ -53,39 +53,40 @@ const formSchema = z.object({
 
 type formValues = z.infer<typeof formSchema>;
 
-interface CreateFoodPriceFormProps {
+interface UpdateFoodPriceFormProps {
   foods: SelectFood[];
   countries: SelectCountry[];
+  foodPrice: SelectFoodPrice;
 }
 
-export function CreateFoodPriceForm({
+export function UpdateFoodPriceForm({
   foods,
   countries,
-}: CreateFoodPriceFormProps) {
+  foodPrice,
+}: UpdateFoodPriceFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date>(foodPrice.date);
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      open: undefined,
-      low: undefined,
-      high: undefined,
-      close: undefined,
-      date: new Date(),
-      year: new Date().getFullYear(),
-      month: new Date().getMonth(),
-      foodId: "",
-      countryId: "",
+      open: foodPrice.open ?? undefined,
+      low: foodPrice.low ?? undefined,
+      high: foodPrice.high ?? undefined,
+      close: foodPrice.close ?? undefined,
+      date: foodPrice.date,
+      year: foodPrice.date.getFullYear(),
+      month: foodPrice.date.getMonth(),
+      foodId: foodPrice.foodId,
+      countryId: foodPrice.countryId,
     },
   });
 
   const onSubmit = async (values: formValues) => {
     setIsLoading(true);
     try {
-      await createFoodPrice(values);
+      await updateFoodPrice(foodPrice.id, values);
 
-      form.reset();
       toast.success("Succes");
     } catch (error) {
       if (error instanceof Error) {
@@ -115,7 +116,7 @@ export function CreateFoodPriceForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-8")}>
         <div className="flex w-full flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold text-primary">Create Food Price</h1>
+          <h1 className="text-2xl font-bold text-primary">Update Food Price</h1>
         </div>
         <FormField
           name={"countryId"}
