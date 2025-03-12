@@ -1,3 +1,5 @@
+import { foodColumns } from "@/components/table/columns/food-columns";
+import { DataTable } from "@/components/table/data-table";
 import { getFoods } from "@/lib/actions/foods";
 
 export default async function Page() {
@@ -5,9 +7,7 @@ export default async function Page() {
 
   return (
     <div className="flex min-h-svh w-full flex-1 flex-col p-4 py-10">
-      <div className="mx-auto w-full max-w-4xl">
-        <pre>{JSON.stringify(foods, null, 2)}</pre>
-      </div>
+      <DataTable data={foods} columns={foodColumns} />
     </div>
   );
 }

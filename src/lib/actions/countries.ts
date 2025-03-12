@@ -76,7 +76,7 @@ export async function deleteCountry(id: string) {
 
 export async function deleteCountries(ids: string[]) {
   try {
-    const [res] = await db
+    const res = await db
       .delete(countriesTable)
       .where(inArray(countriesTable.id, ids))
       .returning({ id: countriesTable.id });

@@ -23,7 +23,12 @@ export const uploadFiles = async (files: File[]) => {
   try {
     const res = await utapi.uploadFiles(files);
 
-    return res;
+    const error = res.find((result) => result.error);
+    if (error) {
+      throw new Error(error.error?.message ?? "Unknown upload error");
+    }
+
+    return res.map((v) => v.data);
   } catch (error) {
     console.log(error);
     throw error;
@@ -34,7 +39,7 @@ export const deleteFile = async (key: string) => {
   try {
     const res = await utapi.deleteFiles(key);
 
-    return res;
+    return res.success;
   } catch (error) {
     console.log(error);
     throw error;
@@ -45,7 +50,7 @@ export const deleteFiles = async (keys: string[]) => {
   try {
     const res = await utapi.deleteFiles(keys);
 
-    return res;
+    return res.success;
   } catch (error) {
     console.log(error);
     throw error;
