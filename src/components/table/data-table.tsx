@@ -27,11 +27,13 @@ import { DataTableToolbar } from "./data-table-toolbar";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  fields?: (keyof TData)[];
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  fields,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -67,7 +69,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full space-y-4">
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table} fields={fields} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

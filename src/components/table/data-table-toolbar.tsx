@@ -2,32 +2,35 @@
 
 import { Table } from "@tanstack/react-table";
 
+import { DataTableViewOption } from "@/components/table/data-table-view-option";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
-import { DataTableViewOption } from "@/components/table/data-table-view-option";
+import { ExportButton } from "../excel/export-button";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
+  fields?: (keyof TData)[];
 }
 
 export function DataTableToolbar<TData>({
   table,
+  fields,
 }: DataTableToolbarProps<TData>) {
   const isFiltered =
     table.getState().columnFilters.length > 0 ||
     table.getState().globalFilter != "";
 
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
+    <div className="flex w-full flex-col items-start justify-between gap-2 md:flex-row md:items-center">
+      <div className="flex w-full flex-1 items-center space-x-2">
         <Input
           placeholder={"Filter"}
           value={table.getState().globalFilter ?? ""}
           onChange={(event) =>
             table.setGlobalFilter(String(event.target.value))
           }
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-full md:w-[250px]"
         />
 
         {isFiltered && (
@@ -44,7 +47,13 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex w-full items-center justify-between gap-4 md:w-fit md:justify-center">
+        <ExportButton
+          fields={fields}
+          datas={table
+            .getFilteredSelectedRowModel()
+            .rows.map((row) => row.original)}
+        />
         <DataTableViewOption table={table} />
       </div>
     </div>

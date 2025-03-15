@@ -27,7 +27,7 @@ export const countriesTable = pgTable("countries", {
 
 export const foodsTable = pgTable("foods", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at")

@@ -13,6 +13,21 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 type FoodPriceType = Awaited<ReturnType<typeof getFoodPricesWithRelations>>[0];
 
 export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
@@ -57,6 +72,14 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Month" />
     ),
+    cell: ({ row }) => <span>{MONTHS[row.original.month]}</span>,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      const monthIndex = Number(row.getValue(columnId)); // Konversi ke angka
+      if (isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) return false; // Validasi indeks bulan
+      const monthName = MONTHS[monthIndex].toLowerCase();
+      return monthName.includes(filterValue.toLowerCase());
+    },
     enableGlobalFilter: false,
   },
   {
@@ -64,6 +87,9 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Year" />
     ),
+    filterFn: (row, columnId, filterValue) => {
+      return row.getValue(columnId) === parseInt(filterValue);
+    },
     enableGlobalFilter: false,
   },
   {
@@ -72,7 +98,7 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
       <DataTableColumnHeader column={column} title="Date" />
     ),
     cell: ({ row }) => (
-      <span>{row.original.date ? format(row.original.date, "P") : ""}</span>
+      <span>{row.original.date ? format(row.original.date, "PP") : ""}</span>
     ),
     enableColumnFilter: false,
     enableGlobalFilter: false,
@@ -90,6 +116,7 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Open" />
     ),
+    enableColumnFilter: false,
     enableGlobalFilter: false,
   },
   {
@@ -97,6 +124,7 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Low" />
     ),
+    enableColumnFilter: false,
     enableGlobalFilter: false,
   },
   {
@@ -104,6 +132,7 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="High" />
     ),
+    enableColumnFilter: false,
     enableGlobalFilter: false,
   },
   {
@@ -111,6 +140,7 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Close" />
     ),
+    enableColumnFilter: false,
     enableGlobalFilter: false,
   },
   {
@@ -118,6 +148,7 @@ export const foodPriceColumns: ColumnDef<FoodPriceType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Inflation" />
     ),
+    enableColumnFilter: false,
     enableGlobalFilter: false,
   },
   {

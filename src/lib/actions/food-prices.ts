@@ -99,6 +99,20 @@ export async function createFoodPrice(data: InsertFoodPrice) {
   }
 }
 
+export async function createFoodPrices(data: InsertFoodPrice[]) {
+  try {
+    const res = await db
+      .insert(foodPricesTable)
+      .values(data)
+      .returning({ id: foodPricesTable.id });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export async function updateFoodPrice(id: string, data: InsertFoodPrice) {
   try {
     const [res] = await db

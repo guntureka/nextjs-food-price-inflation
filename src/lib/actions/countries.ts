@@ -2,8 +2,7 @@
 
 import { db } from "@/db";
 import { countriesTable, InsertCountry } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { eq, inArray, sql } from "drizzle-orm";
 
 export async function getCountries() {
   try {
@@ -36,6 +35,23 @@ export async function createCountry(data: InsertCountry) {
     const [res] = await db
       .insert(countriesTable)
       .values(data)
+      .returning({ id: countriesTable.id });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export async function createCountries(datas: InsertCountry[]) {
+  try {
+    const res = await db
+      .insert(countriesTable)
+      .values(datas)
+      .onConflictDoUpdate({
+        target: countriesTable.countryCode,
+        set: { name: sql`excluded.name`, currency: sql`excluded.currency` },
+      })
       .returning({ id: countriesTable.id });
 
     return res;

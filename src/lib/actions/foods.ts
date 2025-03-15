@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { foodsTable, InsertFood } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 
 export async function getFoods() {
   try {
@@ -35,6 +35,24 @@ export async function createFood(data: InsertFood) {
     const [res] = await db
       .insert(foodsTable)
       .values(data)
+      .returning({ id: foodsTable.id });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function createFoods(datas: InsertFood[]) {
+  try {
+    const res = await db
+      .insert(foodsTable)
+      .values(datas)
+      .onConflictDoUpdate({
+        target: foodsTable.name,
+        set: { description: sql`excluded.description` },
+      })
       .returning({ id: foodsTable.id });
 
     return res;
