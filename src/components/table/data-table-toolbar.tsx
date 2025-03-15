@@ -5,12 +5,13 @@ import { Table } from "@tanstack/react-table";
 import { DataTableViewOption } from "@/components/table/data-table-view-option";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NestedKey } from "@/lib/types";
 import { X } from "lucide-react";
 import { ExportButton } from "../excel/export-button";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  fields?: (keyof TData)[];
+  fields?: NestedKey<TData>[];
 }
 
 export function DataTableToolbar<TData>({

@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { NestedKey } from "@/lib/types";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -27,7 +28,7 @@ import { DataTableToolbar } from "./data-table-toolbar";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  fields?: (keyof TData)[];
+  fields?: NestedKey<TData>[];
 }
 
 export function DataTable<TData, TValue>({

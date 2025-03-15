@@ -98,7 +98,7 @@ export function AppSidebar() {
                       href={item.url}
                       className={
                         item.url == pathname.split("/").slice(0, 3).join("/")
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground"
                           : ""
                       }
                     >

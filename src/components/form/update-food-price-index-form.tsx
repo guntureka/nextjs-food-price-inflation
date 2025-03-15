@@ -1,8 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@/components/loading-button";
 import {
   Form,
   FormControl,
@@ -11,11 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { LoadingButton } from "@/components/loading-button";
-import { useState } from "react";
-import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -23,17 +17,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Button } from "../ui/button";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "../ui/calendar";
+import { SelectCountry, SelectFoodPriceIndex } from "@/db/schema";
+import { updateFoodPriceIndex } from "@/lib/actions/food-price-indexes";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { format, getYear, setYear } from "date-fns";
-import { SelectCountry, SelectFood, SelectFoodPriceIndex } from "@/db/schema";
-import { createFoodPrice } from "@/lib/actions/food-prices";
-import {
-  createFoodPriceIndex,
-  updateFoodPriceIndex,
-} from "@/lib/actions/food-price-indexes";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import { Button } from "../ui/button";
+import { Calendar } from "../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const startYear = getYear(new Date()) - 100;
 const endYear = getYear(new Date());
@@ -116,7 +112,9 @@ export function UpdateFoodPriceIndexForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-8")}>
         <div className="flex w-full flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold text-primary">Update Food Price</h1>
+          <h1 className="text-2xl font-bold text-primary">
+            Update Food Price Index
+          </h1>
         </div>
         <FormField
           name={"countryId"}

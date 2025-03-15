@@ -36,7 +36,7 @@ export async function getFoodPriceIndexesWithRelations() {
         inflation: sql<number | null>`
           CASE
             WHEN food_price_indexes_prev_year.close IS NOT NULL AND food_price_indexes_prev_year.close != 0
-            THEN ROUND(((${foodPriceIndexesPrevYear.close} - food_price_indexes_prev_year.close)/ food_price_indexes_prev_year.close * 100)::numeric, 2)
+            THEN ROUND(((${foodPriceIndexesTable.close} - food_price_indexes_prev_year.close)/ food_price_indexes_prev_year.close * 100)::numeric, 2)
             ELSE NULL
           END
         `.as("inflation"),
@@ -91,6 +91,34 @@ export async function createFoodPriceIndex(data: InsertFoodPriceIndex) {
     const [res] = await db
       .insert(foodPriceIndexesTable)
       .values(data)
+      .returning({ id: foodPriceIndexesTable.id });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function createFoodPriceIndexes(datas: InsertFoodPriceIndex[]) {
+  try {
+    const [res] = await db
+      .insert(foodPriceIndexesTable)
+      .values(datas)
+      .onConflictDoUpdate({
+        target: [
+          foodPriceIndexesTable.month,
+          foodPriceIndexesTable.year,
+          foodPriceIndexesTable.countryId,
+        ],
+        set: {
+          open: foodPriceIndexesTable.open,
+          low: foodPriceIndexesTable.low,
+          high: foodPriceIndexesTable.high,
+          close: foodPriceIndexesTable.close,
+          date: foodPriceIndexesTable.date,
+        },
+      })
       .returning({ id: foodPriceIndexesTable.id });
 
     return res;

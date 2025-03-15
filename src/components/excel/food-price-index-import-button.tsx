@@ -1,8 +1,26 @@
 "use client";
 
+import { ImportButton } from "@/components/excel/import-button";
+import { LoadingButton } from "@/components/loading-button";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getCountries } from "@/lib/actions/countries";
-import { createFoodPrices } from "@/lib/actions/food-prices";
-import { getFoods } from "@/lib/actions/foods";
+import { createFoodPriceIndexes } from "@/lib/actions/food-price-indexes";
 import { ExportExcel, importExcel } from "@/lib/excel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getMonth, getYear } from "date-fns";
@@ -11,29 +29,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { z } from "zod";
-import { LoadingButton } from "../loading-button";
-import { Button } from "../ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { ImportButton } from "./import-button";
 
 const formSchema = z.object({
   file: z.instanceof(File),
-  foodId: z.string().min(1, "Food is required"),
   countryId: z.string().min(1, "Country is required"),
 });
 
@@ -51,9 +49,8 @@ const excelSchema = z.array(
 type formValues = z.infer<typeof formSchema>;
 type excelValues = z.infer<typeof excelSchema.element>;
 
-export function FoodPriceImportButton() {
+export function FoodPriceIndexImportButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const { data: foods, isLoading: isFoodsLoading } = useSWR("foods", getFoods);
   const { data: countries, isLoading: isCountriesLoading } = useSWR(
     "countries",
     getCountries,
@@ -63,7 +60,6 @@ export function FoodPriceImportButton() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       file: undefined,
-      foodId: "",
       countryId: "",
     },
   });
@@ -84,13 +80,12 @@ export function FoodPriceImportButton() {
 
       const results = result.data.map((v) => ({
         ...v,
-        foodId: values.foodId,
         countryId: values.countryId,
         year: getYear(v.date),
         month: getMonth(v.date),
       }));
 
-      await createFoodPrices(results);
+      await createFoodPriceIndexes(results);
 
       toast.success("Success");
     } catch (error) {
@@ -112,7 +107,7 @@ export function FoodPriceImportButton() {
   };
 
   const onExampleClick = () => {
-    return ExportExcel<excelValues>("food-price-example", [
+    return ExportExcel<excelValues>("food-price-index-example", [
       {
         date: new Date(),
         open: 123.4,
@@ -162,35 +157,6 @@ export function FoodPriceImportButton() {
                     <SelectContent>
                       {countries &&
                         countries.map((v, i) => (
-                          <SelectItem
-                            key={i}
-                            value={v.id}
-                            className="capitalize"
-                          >
-                            {v.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name={"foodId"}
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="capitalize">Food</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a food" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {foods &&
-                        foods.map((v, i) => (
                           <SelectItem
                             key={i}
                             value={v.id}

@@ -1,8 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@/components/loading-button";
 import {
   Form,
   FormControl,
@@ -11,18 +9,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { LoadingButton } from "@/components/loading-button";
-import { useState } from "react";
-import { toast } from "sonner";
-import { createFood } from "@/lib/actions/foods";
-import { createCountry, updateCountry } from "@/lib/actions/countries";
-import { formatLabel, getFileKey } from "@/lib/helpers";
 import { SelectCountry } from "@/db/schema";
-import { UploadedFileData } from "uploadthing/types";
+import { updateCountry } from "@/lib/actions/countries";
 import { deleteFile, uploadFile } from "@/lib/actions/uploadthing";
+import { formatLabel, getFileKey } from "@/lib/helpers";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { UploadedFileData } from "uploadthing/types";
+import z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -101,7 +99,7 @@ export function UpdateCountryForm({ country }: UpdateCountryFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-8")}>
         <div className="flex w-full flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold text-primary">Create Country</h1>
+          <h1 className="text-2xl font-bold text-primary">Update Country</h1>
         </div>
 
         {(["name", "countryCode", "currency"] as const).map((name, i) => (

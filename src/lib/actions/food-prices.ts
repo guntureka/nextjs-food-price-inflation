@@ -104,6 +104,21 @@ export async function createFoodPrices(data: InsertFoodPrice[]) {
     const res = await db
       .insert(foodPricesTable)
       .values(data)
+      .onConflictDoUpdate({
+        target: [
+          foodPricesTable.month,
+          foodPricesTable.year,
+          foodPricesTable.foodId,
+          foodPricesTable.countryId,
+        ],
+        set: {
+          open: foodPricesTable.open,
+          low: foodPricesTable.low,
+          high: foodPricesTable.high,
+          close: foodPricesTable.close,
+          date: foodPricesTable.date,
+        },
+      })
       .returning({ id: foodPricesTable.id });
 
     return res;
