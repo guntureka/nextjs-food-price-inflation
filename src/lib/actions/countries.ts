@@ -1,14 +1,93 @@
 "use server";
 
 import { db } from "@/db";
-import { countriesTable, InsertCountry } from "@/db/schema";
-import { eq, inArray, sql } from "drizzle-orm";
+import {
+  countriesTable,
+  foodPriceIndexesTable,
+  InsertCountry,
+} from "@/db/schema";
+import { and, eq, getTableColumns, inArray, SQL, sql } from "drizzle-orm";
 
 export async function getCountries() {
   try {
     const res = await db.select().from(countriesTable);
 
     return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getCountriesWithFoodPriceIndexes(
+  countryId?: string,
+  month?: number,
+  year?: number,
+) {
+  try {
+    let filters: SQL[] = [];
+
+    if (countryId) {
+      filters.push(eq(countriesTable.id, countryId));
+    }
+
+    if (month) {
+      filters.push(eq(foodPriceIndexesTable.month, month));
+    }
+
+    if (year) {
+      filters.push(eq(foodPriceIndexesTable.year, year));
+    }
+
+    const foodPriceIndexesPrevYear = db
+      .select()
+      .from(foodPriceIndexesTable)
+      .as("food_price_indexes_prev_year");
+
+    const query = db
+      .select({
+        ...getTableColumns(countriesTable),
+        foodPriceIndex: getTableColumns(foodPriceIndexesTable),
+      })
+      .from(countriesTable)
+      .leftJoin(
+        foodPriceIndexesTable,
+        eq(countriesTable.id, foodPriceIndexesTable.countryId),
+      );
+
+    const res = await query.where(and(...filters));
+
+    return res;
+
+    // const result = res.reduce<
+    //   Array<SelectCountry & { foodPriceIndexes: SelectFoodPriceIndex[] }>
+    // >((acc, row) => {
+    //   const country = row.country;
+    //   const foodPriceIndex = row.foodPriceIndexes;
+
+    //   if (!country) return acc;
+
+    //   const existing = acc.find((item) => item.id === country.id);
+
+    //   if (existing) {
+    //     existing.foodPriceIndexes.push(
+    //       ...(Array.isArray(foodPriceIndex)
+    //         ? foodPriceIndex
+    //         : [foodPriceIndex]),
+    //     );
+    //   } else {
+    //     acc.push({
+    //       ...country,
+    //       foodPriceIndexes: Array.isArray(foodPriceIndex)
+    //         ? foodPriceIndex.filter((index) => index !== null)
+    //         : [foodPriceIndex].filter((index) => index !== null),
+    //     });
+    //   }
+
+    //   return acc;
+    // }, []);
+
+    // return result;
   } catch (error) {
     console.log(error);
     throw error;

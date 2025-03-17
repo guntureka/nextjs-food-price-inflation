@@ -5,8 +5,11 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import { DataTableColumnAction } from "@/components/table/data-table-header-column-action";
 import { DataTableRowAction } from "@/components/table/data-table-row-action";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getFoodPriceIndexesWithRelations } from "@/lib/actions/food-price-indexes";
-import { deleteFoodPrice, deleteFoodPrices } from "@/lib/actions/food-prices";
+import {
+  deleteFoodPriceIndex,
+  deleteFoodPriceIndexes,
+  getFoodPriceIndexesWithRelations,
+} from "@/lib/actions/food-price-indexes";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 
@@ -48,7 +51,7 @@ export const foodPriceIndexColumns: ColumnDef<FoodPriceIndexType>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(v) => row.toggleSelected(!!v)}
         aria-label="Select row"
-        className="m-2 flex justify-center"
+        className="mx-auto flex justify-center"
       />
     ),
     enableSorting: false,
@@ -165,10 +168,13 @@ export const foodPriceIndexColumns: ColumnDef<FoodPriceIndexType>[] = [
   {
     id: "action",
     header: ({ table }) => (
-      <DataTableColumnAction table={table} deletesFunc={deleteFoodPrices} />
+      <DataTableColumnAction
+        table={table}
+        deletesFunc={deleteFoodPriceIndexes}
+      />
     ),
     cell: ({ row }) => (
-      <DataTableRowAction row={row} deleteFunc={deleteFoodPrice} />
+      <DataTableRowAction row={row} deleteFunc={deleteFoodPriceIndex} />
     ),
   },
 ];

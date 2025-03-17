@@ -13,14 +13,20 @@ import { Input } from "@/components/ui/input";
 import { SelectCountry } from "@/db/schema";
 import { updateCountry } from "@/lib/actions/countries";
 import { deleteFile, uploadFile } from "@/lib/actions/uploadthing";
+import { readGeojsonFile } from "@/lib/geojson";
 import { formatLabel, getFileKey } from "@/lib/helpers";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { FeatureCollection } from "geojson";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import useSWR from "swr";
 import { UploadedFileData } from "uploadthing/types";
 import z from "zod";
+import { MapCaller } from "../leaflet/map-caller";
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -43,6 +49,23 @@ interface UpdateCountryFormProps {
 
 export function UpdateCountryForm({ country }: UpdateCountryFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [preview, setPreview] = useState<
+    { data?: Record<string, any>; geojson?: FeatureCollection | null }[]
+  >([]);
+  const { data: geojsonFile, error } = useSWR(
+    country.geojsonUrl ? country.geojsonUrl : null,
+    fetcher,
+  );
+
+  useEffect(() => {
+    if (geojsonFile) {
+      try {
+        setPreview([{ geojson: geojsonFile }]);
+      } catch (err) {
+        toast.error("Error parsing GeoJSON");
+      }
+    }
+  }, [geojsonFile]);
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
@@ -86,13 +109,31 @@ export function UpdateCountryForm({ country }: UpdateCountryFormProps) {
     }
   };
 
-  const onGeojsonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onGeojsonChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
 
-    form.setValue("geojson", file);
-    form.trigger("geojson");
+    try {
+      const geojson = await readGeojsonFile(file);
+
+      setPreview([
+        {
+          geojson,
+        },
+      ]);
+
+      console.log(preview);
+
+      form.setValue("geojson", file);
+      form.trigger("geojson");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Error", { description: error.message });
+      } else {
+        toast.error("Error", { description: "Something wen't wrong" });
+      }
+    }
   };
 
   return (
@@ -139,6 +180,10 @@ export function UpdateCountryForm({ country }: UpdateCountryFormProps) {
             </FormItem>
           )}
         />
+
+        <div className="relative h-[400px] w-full overflow-hidden rounded-lg border border-gray-300">
+          <MapCaller datas={preview} />
+        </div>
 
         <LoadingButton isLoading={isLoading}>Submit</LoadingButton>
       </form>

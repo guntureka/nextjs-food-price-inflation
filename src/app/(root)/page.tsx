@@ -1,17 +1,36 @@
-"use client";
+import { getCountriesWithFoodPriceIndexes } from "@/lib/actions/countries";
 
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) {
+  const { country, month, year } = await searchParams;
+  const foodPriceIndexes = await getCountriesWithFoodPriceIndexes(
+    country,
+    Number(month),
+    Number(year),
+  );
 
-export default function Home() {
+  // const result = await Promise.all(
+  //   foodPriceIndexes.map(async (v) => {
+  //     const geojsonFetch = v.geojsonUrl ? await fetch(v.geojsonUrl) : null;
+  //     const geojsonJson = geojsonFetch ? await geojsonFetch.json() : null;
+
+  //     return {
+  //       data: { ...v },
+  //       geojson: geojsonJson,
+  //     };
+  //   }),
+  // );
+
   return (
-    <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20">
+    <div className="grid min-h-screen w-full grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20">
       <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start">
-        <Button
-          onClick={() => toast.success("Success", { description: "success" })}
-        >
-          Sonner
-        </Button>
+        {/* <div className="relative h-[400px] w-full overflow-hidden rounded-lg border border-gray-300">
+          <MapCaller datas={result} />
+        </div> */}
+        <pre>{JSON.stringify(foodPriceIndexes, null, 2)}</pre>
       </main>
     </div>
   );
