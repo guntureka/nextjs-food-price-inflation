@@ -136,6 +136,19 @@ export const foodPriceIndexColumns: ColumnDef<FoodPriceIndexType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Inflation" />
     ),
+    cell: ({ row }) => {
+      return (
+        <p
+          className={
+            row.original.inflation != null && row.original.inflation < 0
+              ? "text-green-500"
+              : "text-red-500"
+          }
+        >
+          {row.original.inflation}
+        </p>
+      );
+    },
     enableColumnFilter: false,
     enableGlobalFilter: false,
   },

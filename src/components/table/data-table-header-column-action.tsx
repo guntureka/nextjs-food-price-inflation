@@ -5,13 +5,6 @@ import { Ellipsis, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import React, { useState } from "react";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -20,9 +13,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { LoadingButton } from "../loading-button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 import { toast } from "sonner";
-import { deleteFiles } from "@/lib/actions/uploadthing";
+import { LoadingButton } from "../loading-button";
+// import { deleteFiles } from "@/lib/actions/uploadthing";
+import { deleteFiles } from "@/lib/actions/minio";
 import { getFileKey } from "@/lib/helpers";
 
 interface DataTableColumnActionProps<

@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createCountry } from "@/lib/actions/countries";
-import { uploadFile } from "@/lib/actions/uploadthing";
+import { uploadFile } from "@/lib/actions/minio";
+// import { uploadFile } from "@/lib/actions/uploadthing";
 import { readGeojsonFile } from "@/lib/geojson";
 import { formatLabel } from "@/lib/helpers";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,6 @@ import { FeatureCollection } from "geojson";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { UploadedFileData } from "uploadthing/types";
 import z from "zod";
 
 const formSchema = z.object({
@@ -58,7 +58,7 @@ export function CreateCountryForm() {
     setIsLoading(true);
 
     try {
-      let geojsonUrl: UploadedFileData | null = null;
+      let geojsonUrl: string | null = null;
 
       const { geojson, ...datas } = values;
 
@@ -66,7 +66,7 @@ export function CreateCountryForm() {
         geojsonUrl = await uploadFile(geojson);
       }
 
-      await createCountry({ ...datas, geojsonUrl: geojsonUrl?.ufsUrl });
+      await createCountry({ ...datas, geojsonUrl: geojsonUrl });
 
       form.reset();
       toast.success("Succes");

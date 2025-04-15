@@ -1,18 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Row } from "@tanstack/react-table";
 import { Ellipsis, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { usePathname } from "next/navigation";
-import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,9 +14,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { LoadingButton } from "../loading-button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { getFileKey } from "@/lib/helpers";
-import { deleteFiles } from "@/lib/actions/uploadthing";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { LoadingButton } from "../loading-button";
+// import { deleteFiles } from "@/lib/actions/uploadthing";
+import { deleteFiles } from "@/lib/actions/minio";
 import { toast } from "sonner";
 
 interface DataTableRowActionsProps<

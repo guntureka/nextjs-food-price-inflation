@@ -161,6 +161,7 @@ export function FoodPriceImportButton() {
                     </SelectTrigger>
                     <SelectContent>
                       {countries &&
+                        !isCountriesLoading &&
                         countries.map((v, i) => (
                           <SelectItem
                             key={i}
@@ -190,6 +191,7 @@ export function FoodPriceImportButton() {
                     </SelectTrigger>
                     <SelectContent>
                       {foods &&
+                        !isFoodsLoading &&
                         foods.map((v, i) => (
                           <SelectItem
                             key={i}

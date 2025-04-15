@@ -12,7 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { SelectCountry } from "@/db/schema";
 import { updateCountry } from "@/lib/actions/countries";
-import { deleteFile, uploadFile } from "@/lib/actions/uploadthing";
+// import { deleteFile, uploadFile } from "@/lib/actions/uploadthing";
+import { deleteFile, uploadFile } from "@/lib/actions/minio";
 import { readGeojsonFile } from "@/lib/geojson";
 import { formatLabel, getFileKey } from "@/lib/helpers";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useSWR from "swr";
-import { UploadedFileData } from "uploadthing/types";
 import z from "zod";
 import { MapCaller } from "../leaflet/map-caller";
 
@@ -81,20 +81,21 @@ export function UpdateCountryForm({ country }: UpdateCountryFormProps) {
     setIsLoading(true);
 
     try {
-      let geojsonUrl: UploadedFileData | null = null;
+      let geojsonUrl: string | null = null;
 
       const { geojson, ...datas } = values;
 
       if (geojson) {
         if (country.geojsonUrl && getFileKey(country.geojsonUrl)) {
-          await deleteFile(country.geojsonUrl);
+          const key = getFileKey(country.geojsonUrl);
+          key && (await deleteFile(key));
         }
         geojsonUrl = await uploadFile(geojson);
       }
 
       await updateCountry(country.id, {
         ...datas,
-        geojsonUrl: geojsonUrl?.ufsUrl,
+        geojsonUrl: geojsonUrl,
       });
 
       toast.success("Succes");

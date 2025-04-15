@@ -56,6 +56,8 @@ export function FoodPriceIndexImportButton() {
     getCountries,
   );
 
+  console.log(countries);
+
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -156,6 +158,7 @@ export function FoodPriceIndexImportButton() {
                     </SelectTrigger>
                     <SelectContent>
                       {countries &&
+                        !isCountriesLoading &&
                         countries.map((v, i) => (
                           <SelectItem
                             key={i}
