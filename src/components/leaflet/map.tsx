@@ -38,7 +38,7 @@ export function Map({ datas }: MapProps) {
       />
       {datas &&
         datas.map(
-          (v, i) =>
+          (v) =>
             v.geojson && (
               <GeoJSON
                 key={v.geojson.features[0].id}

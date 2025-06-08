@@ -20,12 +20,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getFileKey } from "@/lib/helpers";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { LoadingButton } from "../loading-button";
 // import { deleteFiles } from "@/lib/actions/uploadthing";
-import { deleteFiles } from "@/lib/actions/minio";
 import { toast } from "sonner";
 
 interface DataTableRowActionsProps<
@@ -42,40 +40,18 @@ interface DataTableRowActionsProps<
 export function DataTableRowAction<
   TData extends {
     id: string;
-    geojsonUrl?: string | null;
-    image?: string | null;
   },
 >({ row, deleteFunc }: DataTableRowActionsProps<TData>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const pathname = usePathname();
 
-  const { id, geojsonUrl, image } = row.original;
+  const { id } = row.original;
 
   const onDelete = async () => {
     setIsLoading(true);
 
     try {
-      const keys: string[] = [];
-
-      if (geojsonUrl) {
-        const key = getFileKey(geojsonUrl);
-        if (key) keys.push(key);
-      }
-
-      if (image) {
-        const key = getFileKey(image);
-        if (key) keys.push(key);
-      }
-
-      if (keys.length > 0) {
-        const res = await deleteFiles(keys);
-
-        if (!res) {
-          throw new Error("Error when deleting files");
-        }
-      }
-
       await deleteFunc(id);
 
       toast.success("Success");

@@ -1,32 +1,27 @@
-import { MapCaller } from "@/components/leaflet/map-caller";
-import { getCountries } from "@/lib/actions/countries";
+import { SIGForm } from "@/components/form/sig-form";
+import { getFoods } from "@/lib/actions/foods";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | undefined }>;
-}) {
-  const countries = await getCountries();
-
-  const result = await Promise.all(
-    countries.map(async (v) => {
-      const geojsonFetch = v.geojsonUrl ? await fetch(v.geojsonUrl) : null;
-      const geojsonJson = geojsonFetch ? await geojsonFetch.json() : null;
-
-      return {
-        data: { ...v },
-        geojson: geojsonJson,
-      };
-    }),
-  );
+export default async function Home() {
+  const [foods] = await Promise.all([getFoods()]);
 
   return (
-    <div className="grid min-h-screen w-full grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20">
-      <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start">
-        <div className="relative h-[400px] w-full overflow-hidden rounded-lg border border-gray-300">
-          <MapCaller datas={result} />
-        </div>
-        <pre>{JSON.stringify(countries, null, 2)}</pre>
+    <div className="min-h-screen bg-gray-50 p-6 sm:p-12">
+      <main className="mx-auto flex max-w-5xl flex-col gap-10">
+        {/* Jika mau tambahkan header atau deskripsi */}
+        <header className="mb-6 text-center">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Sistem Informasi Geografis Harga Inflasi Pangan
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Pilih jenis pangan, tahun, dan bulan untuk melihat data inflasi
+            harga di peta.
+          </p>
+        </header>
+
+        {/* Form filter */}
+        <section className="rounded-lg bg-white p-6 shadow">
+          <SIGForm foods={foods} />
+        </section>
       </main>
     </div>
   );

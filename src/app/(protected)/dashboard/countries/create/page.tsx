@@ -1,5 +1,4 @@
 import { CreateCountryForm } from "@/components/form/create-country-form";
-import { CreateFoodForm } from "@/components/form/create-food-form";
 
 export default function Page() {
   return (

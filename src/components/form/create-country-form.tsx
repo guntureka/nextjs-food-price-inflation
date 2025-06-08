@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createCountry } from "@/lib/actions/countries";
-import { uploadFile } from "@/lib/actions/minio";
 // import { uploadFile } from "@/lib/actions/uploadthing";
 import { readGeojsonFile } from "@/lib/geojson";
 import { formatLabel } from "@/lib/helpers";
@@ -58,15 +57,15 @@ export function CreateCountryForm() {
     setIsLoading(true);
 
     try {
-      let geojsonUrl: string | null = null;
+      let geojsonJSON: FeatureCollection | null = null;
 
       const { geojson, ...datas } = values;
 
       if (geojson) {
-        geojsonUrl = await uploadFile(geojson);
+        geojsonJSON = await readGeojsonFile(geojson);
       }
 
-      await createCountry({ ...datas, geojsonUrl: geojsonUrl });
+      await createCountry({ ...datas, geojson: geojsonJSON });
 
       form.reset();
       toast.success("Succes");
@@ -94,8 +93,6 @@ export function CreateCountryForm() {
           geojson,
         },
       ]);
-
-      console.log(preview);
 
       form.setValue("geojson", file);
       form.trigger("geojson");

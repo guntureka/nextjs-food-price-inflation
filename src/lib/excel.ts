@@ -19,7 +19,7 @@ export async function importExcel(file: File) {
       .replace(/\s+/g, "");
 
   // Ubah key setiap objek ke format camelCase
-  const transformedData = rawData.map((row) =>
+  rawData.map((row) =>
     Object.fromEntries(
       Object.entries(row).map(([key, value]) => [toCamelCase(key), value]),
     ),

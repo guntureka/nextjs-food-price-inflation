@@ -116,7 +116,6 @@ export async function createFoodPrices(data: InsertFoodPrice[]) {
           low: foodPricesTable.low,
           high: foodPricesTable.high,
           close: foodPricesTable.close,
-          date: foodPricesTable.date,
         },
       })
       .returning({ id: foodPricesTable.id });

@@ -24,7 +24,6 @@ import {
 import {
   BadgeCheck,
   Banana,
-  ChartNoAxesCombined,
   ChevronsUpDown,
   DollarSign,
   Home,
@@ -56,11 +55,11 @@ const items = [
     url: "/dashboard/food-prices",
     icon: DollarSign,
   },
-  {
-    title: "Food Price Indexes",
-    url: "/dashboard/food-price-indexes",
-    icon: ChartNoAxesCombined,
-  },
+  // {
+  //   title: "Food Price Indexes",
+  //   url: "/dashboard/food-price-indexes",
+  //   icon: ChartNoAxesCombined,
+  // },
 ];
 
 export function AppSidebar() {

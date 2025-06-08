@@ -13,20 +13,16 @@ import { Input } from "@/components/ui/input";
 import { SelectCountry } from "@/db/schema";
 import { updateCountry } from "@/lib/actions/countries";
 // import { deleteFile, uploadFile } from "@/lib/actions/uploadthing";
-import { deleteFile, uploadFile } from "@/lib/actions/minio";
 import { readGeojsonFile } from "@/lib/geojson";
-import { formatLabel, getFileKey } from "@/lib/helpers";
+import { formatLabel } from "@/lib/helpers";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FeatureCollection } from "geojson";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import useSWR from "swr";
 import z from "zod";
 import { MapCaller } from "../leaflet/map-caller";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -50,22 +46,11 @@ interface UpdateCountryFormProps {
 export function UpdateCountryForm({ country }: UpdateCountryFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [preview, setPreview] = useState<
-    { data?: Record<string, any>; geojson?: FeatureCollection | null }[]
+    {
+      data?: Record<string, any>;
+      geojson?: FeatureCollection | null | undefined;
+    }[]
   >([]);
-  const { data: geojsonFile, error } = useSWR(
-    country.geojsonUrl ? country.geojsonUrl : null,
-    fetcher,
-  );
-
-  useEffect(() => {
-    if (geojsonFile) {
-      try {
-        setPreview([{ geojson: geojsonFile }]);
-      } catch (err) {
-        toast.error("Error parsing GeoJSON");
-      }
-    }
-  }, [geojsonFile]);
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
@@ -77,25 +62,32 @@ export function UpdateCountryForm({ country }: UpdateCountryFormProps) {
     },
   });
 
+  useEffect(() => {
+    // Only set preview if valid FeatureCollection
+    if (
+      country.geojson &&
+      typeof country.geojson === "object" &&
+      "features" in country.geojson
+    ) {
+      setPreview([{ geojson: country.geojson as FeatureCollection }]);
+    }
+  }, [country.geojson]);
+
   const onSubmit = async (values: formValues) => {
     setIsLoading(true);
 
     try {
-      let geojsonUrl: string | null = null;
+      let geojsonJSON: FeatureCollection | null = null;
 
       const { geojson, ...datas } = values;
 
       if (geojson) {
-        if (country.geojsonUrl && getFileKey(country.geojsonUrl)) {
-          const key = getFileKey(country.geojsonUrl);
-          key && (await deleteFile(key));
-        }
-        geojsonUrl = await uploadFile(geojson);
+        geojsonJSON = await readGeojsonFile(geojson);
       }
 
       await updateCountry(country.id, {
         ...datas,
-        geojsonUrl: geojsonUrl,
+        geojson: geojsonJSON ?? country.geojson,
       });
 
       toast.success("Succes");

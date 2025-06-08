@@ -22,9 +22,6 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import { LoadingButton } from "../loading-button";
-// import { deleteFiles } from "@/lib/actions/uploadthing";
-import { deleteFiles } from "@/lib/actions/minio";
-import { getFileKey } from "@/lib/helpers";
 
 interface DataTableColumnActionProps<
   TData extends {
@@ -50,9 +47,6 @@ export function DataTableColumnAction<
     .getSelectedRowModel()
     .flatRows.flatMap((v) => v.original);
   const ids = selected.flatMap((v) => v.id).filter(Boolean);
-  const files = selected
-    .flatMap((v) => [v.geojsonUrl, v.image])
-    .filter(Boolean) as string[];
 
   const onDelete = async () => {
     if (ids.length < 1) return;
@@ -60,20 +54,6 @@ export function DataTableColumnAction<
     setIsLoading(true);
 
     try {
-      const keys = files.reduce<string[]>((acc, file) => {
-        const key = getFileKey(file);
-        if (key) acc.push(key);
-        return acc;
-      }, []);
-
-      if (keys.length > 0) {
-        const res = await deleteFiles(keys);
-
-        if (!res) {
-          throw new Error("Error when deleting files");
-        }
-      }
-
       await deletesFunc(ids);
 
       toast.success("Success");
