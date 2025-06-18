@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { LoadingButton } from "../loading-button";
@@ -43,6 +44,8 @@ export function DataTableColumnAction<
 >({ table, deletesFunc }: DataTableColumnActionProps<TData>) {
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+
   const selected = table
     .getSelectedRowModel()
     .flatRows.flatMap((v) => v.original);
@@ -57,6 +60,7 @@ export function DataTableColumnAction<
       await deletesFunc(ids);
 
       toast.success("Success");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error", { description: error.message });

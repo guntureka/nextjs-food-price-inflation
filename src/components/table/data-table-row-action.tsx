@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoadingButton } from "../loading-button";
 // import { deleteFiles } from "@/lib/actions/uploadthing";
@@ -45,6 +45,7 @@ export function DataTableRowAction<
   const [isLoading, setIsLoading] = useState(false);
 
   const pathname = usePathname();
+  const router = useRouter();
 
   const { id } = row.original;
 
@@ -55,6 +56,7 @@ export function DataTableRowAction<
       await deleteFunc(id);
 
       toast.success("Success");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error", { description: error.message });

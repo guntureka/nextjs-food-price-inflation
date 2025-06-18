@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { BreadcrumbProvider } from "@/components/breadcrumb-provider";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -7,21 +8,45 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Metadata } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const headersList = await headers();
+  const fullUrl = headersList.get("x-url") || "";
+  const pathname = headersList.get("x-pathname") || "";
+  const host = headersList.get("host");
+  const protocol = headersList.get("x-forwarded-proto") || "http";
+
+  // Construct full URL if needed
+  const currentUrl = `${protocol}://${host}${pathname}`;
+
+  console.log(pathname);
   // return (
   //   <div className="min-h-screen w-full">
   //     <BreadcrumbProvider />
   //     {children}
   //   </div>
   // );
+  const session = await auth();
+
+  if (!session) redirect("/");
+
+  if (session.user.role != "admin" && pathname.startsWith("/dashboard/users")) {
+    redirect("/dashboard");
+  }
+
   return (
     <SidebarProvider defaultOpen={false}>
-      <AppSidebar />
+      <AppSidebar session={session} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">

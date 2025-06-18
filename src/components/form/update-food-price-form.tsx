@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, getYear, setYear } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -68,6 +69,8 @@ export function UpdateFoodPriceForm({
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState<Date>(foodPrice.date);
 
+  const router = useRouter();
+
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,6 +92,7 @@ export function UpdateFoodPriceForm({
       await updateFoodPrice(foodPrice.id, values);
 
       toast.success("Succes");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error", { description: error.message });

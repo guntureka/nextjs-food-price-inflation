@@ -102,8 +102,12 @@ export default function SIGMap({ data }: SIGMapProps) {
                   <div>Currency: {country.currency ?? "N/A"}</div>
                   <div>Price: {price?.close ?? "N/A"}</div>
                   <div>
-                    Inflation:
-                    {price?.inflation != null ? `${price.inflation} %` : "N/A"}
+                    <p>
+                      Inflation:{" "}
+                      {price?.inflation != null
+                        ? `${price.inflation} %`
+                        : "N/A"}
+                    </p>
                   </div>
                 </div>
               </Tooltip>

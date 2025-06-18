@@ -1,8 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@/components/loading-button";
 import {
   Form,
   FormControl,
@@ -11,13 +9,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { LoadingButton } from "@/components/loading-button";
-import { useState } from "react";
-import { toast } from "sonner";
 import { createFood } from "@/lib/actions/foods";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -28,6 +29,8 @@ type formValues = z.infer<typeof formSchema>;
 
 export function CreateFoodForm() {
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
@@ -44,6 +47,7 @@ export function CreateFoodForm() {
 
       form.reset();
       toast.success("Succes");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error", { description: error.message });

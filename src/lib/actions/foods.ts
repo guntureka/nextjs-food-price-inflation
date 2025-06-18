@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { foodsTable, InsertFood } from "@/db/schema";
-import { eq, inArray, sql } from "drizzle-orm";
+import { count, eq, inArray, sql } from "drizzle-orm";
 
 export async function getFoods() {
   try {
@@ -97,6 +97,17 @@ export async function deleteFoods(ids: string[]) {
       .delete(foodsTable)
       .where(inArray(foodsTable.id, ids))
       .returning({ id: foodsTable.id });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function countFoods() {
+  try {
+    const [res] = await db.select({ count: count() }).from(foodsTable);
 
     return res;
   } catch (error) {

@@ -17,6 +17,7 @@ import { formatLabel } from "@/lib/helpers";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FeatureCollection } from "geojson";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -42,6 +43,8 @@ export function CreateCountryForm() {
   const [preview, setPreview] = useState<
     { data?: Record<string, any>; geojson?: FeatureCollection | null }[]
   >([]);
+
+  const router = useRouter();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
@@ -69,6 +72,7 @@ export function CreateCountryForm() {
 
       form.reset();
       toast.success("Succes");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error", { description: error.message });

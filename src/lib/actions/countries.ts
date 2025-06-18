@@ -6,7 +6,7 @@ import {
   // foodPriceIndexesTable,
   InsertCountry,
 } from "@/db/schema";
-import { eq, inArray, sql } from "drizzle-orm";
+import { count, eq, inArray, sql } from "drizzle-orm";
 
 export async function getCountries() {
   try {
@@ -184,6 +184,17 @@ export async function deleteCountries(ids: string[]) {
       .delete(countriesTable)
       .where(inArray(countriesTable.id, ids))
       .returning({ id: countriesTable.id });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function countCountries() {
+  try {
+    const [res] = await db.select({ count: count() }).from(countriesTable);
 
     return res;
   } catch (error) {
