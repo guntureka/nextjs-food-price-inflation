@@ -21,21 +21,8 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const headersList = await headers();
-  const fullUrl = headersList.get("x-url") || "";
   const pathname = headersList.get("x-pathname") || "";
-  const host = headersList.get("host");
-  const protocol = headersList.get("x-forwarded-proto") || "http";
 
-  // Construct full URL if needed
-  const currentUrl = `${protocol}://${host}${pathname}`;
-
-  console.log(pathname);
-  // return (
-  //   <div className="min-h-screen w-full">
-  //     <BreadcrumbProvider />
-  //     {children}
-  //   </div>
-  // );
   const session = await auth();
 
   if (!session) redirect("/");

@@ -22,7 +22,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signOut: "/",
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user }) {
       // Initial sign in
       if (user) {
         token.sub = user.id;

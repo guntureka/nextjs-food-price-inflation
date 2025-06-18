@@ -2,15 +2,15 @@
 
 // import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
+import { DataTableColumnAction } from "@/components/table/data-table-header-column-action";
+import { DataTableRowAction } from "@/components/table/data-table-row-action";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SelectCountry } from "@/db/schema";
+import { deleteCountries, deleteCountry } from "@/lib/actions/countries";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { DataTableColumnAction } from "@/components/table/data-table-header-column-action";
-import { deleteCountries, deleteCountry } from "@/lib/actions/countries";
-import { DataTableRowAction } from "@/components/table/data-table-row-action";
 
-export const countryColumns: ColumnDef<SelectCountry>[] = [
+export const countryColumns: ColumnDef<Omit<SelectCountry, "geojson">>[] = [
   {
     id: "select",
     header: ({ table }) => (
