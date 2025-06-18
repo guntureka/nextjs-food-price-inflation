@@ -3,7 +3,7 @@ import { getFoods } from "@/lib/actions/foods";
 import { Suspense } from "react";
 
 export default async function Home() {
-  const [foods] = await Promise.all([getFoods()]);
+  const foods = await getFoods();
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 sm:p-12">
