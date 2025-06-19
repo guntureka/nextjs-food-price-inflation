@@ -1,7 +1,6 @@
 import { SIGForm } from "@/components/form/sig-form";
 import { getFoods } from "@/lib/actions/foods";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 
 export default async function Home() {
   try {
@@ -23,9 +22,7 @@ export default async function Home() {
 
           {/* Form filter */}
           <section className="rounded-lg bg-white p-6 shadow">
-            <Suspense>
-              <SIGForm foods={foods} />
-            </Suspense>
+            <SIGForm foods={foods} />
           </section>
         </main>
       </div>
