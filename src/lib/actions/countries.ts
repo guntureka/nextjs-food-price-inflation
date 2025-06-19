@@ -1,11 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import {
-  countriesTable,
-  // foodPriceIndexesTable,
-  InsertCountry,
-} from "@/db/schema";
+import { countriesTable, InsertCountry } from "@/db/schema";
 import { count, eq, inArray, sql } from "drizzle-orm";
 
 export async function getCountries() {

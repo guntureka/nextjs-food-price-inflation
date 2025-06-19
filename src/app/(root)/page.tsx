@@ -1,10 +1,8 @@
-import { SIGForm } from "@/components/form/sig-form";
-import { getFoods } from "@/lib/actions/foods";
 import { notFound } from "next/navigation";
 
 export default async function Home() {
   try {
-    const foods = await getFoods();
+    // const foods = await getFoods();
 
     return (
       <div className="min-h-screen bg-gray-50 p-6 sm:p-12">
@@ -22,7 +20,7 @@ export default async function Home() {
 
           {/* Form filter */}
           <section className="rounded-lg bg-white p-6 shadow">
-            <SIGForm foods={foods} />
+            {/* <SIGForm foods={foods} /> */}
           </section>
         </main>
       </div>
