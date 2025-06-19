@@ -1,9 +1,10 @@
+import { getFoods } from "@/lib/actions/foods";
 import { notFound } from "next/navigation";
 
 export default async function Home() {
   try {
-    // const foods = await getFoods();
-
+    const foods = await getFoods();
+    console.log(foods);
     return (
       <div className="min-h-screen bg-gray-50 p-6 sm:p-12">
         <main className="mx-auto flex flex-col gap-10">
@@ -26,6 +27,6 @@ export default async function Home() {
       </div>
     );
   } catch {
-    return notFound;
+    return notFound();
   }
 }
