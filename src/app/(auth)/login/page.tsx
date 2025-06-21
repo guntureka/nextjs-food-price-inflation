@@ -1,8 +1,13 @@
 import { auth } from "@/auth";
 import { LoginForm } from "@/components/form/login-form";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Login",
+};
 
 export default async function LoginPage() {
   const session = await auth();
@@ -24,7 +29,9 @@ export default async function LoginPage() {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <Image
-          src="/placeholder.svg"
+          width={2000}
+          height={2000}
+          src="/background.jpg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />

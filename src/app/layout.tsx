@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     default: "Food Price Inflation",
   },
   icons: {
-    icon: "/next.svg",
+    icon: "/corn.png",
   },
 };
 
@@ -42,6 +43,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Navbar />
             {children}
             <Toaster />
           </ThemeProvider>

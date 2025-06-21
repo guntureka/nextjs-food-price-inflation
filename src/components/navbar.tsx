@@ -2,10 +2,13 @@
 
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
 export function Navbar() {
   const { data: session } = useSession();
+  const pathName = usePathname();
+  if (pathName != "/") return;
   return (
     <nav className="top-0 z-50 mx-auto flex min-h-20 w-full items-center justify-between px-10">
       <Link href="/" className="text-xl font-bold text-primary">
