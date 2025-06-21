@@ -6,6 +6,7 @@ import { getFoods } from "@/lib/actions/foods";
 import { ExportExcel, importExcel } from "@/lib/excel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getMonth, getYear } from "date-fns";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -59,6 +60,8 @@ export function FoodPriceImportButton() {
     getCountries,
   );
 
+  const router = useRouter();
+
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -93,6 +96,7 @@ export function FoodPriceImportButton() {
       await createFoodPrices(results);
 
       toast.success("Success");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error", { description: error.message });

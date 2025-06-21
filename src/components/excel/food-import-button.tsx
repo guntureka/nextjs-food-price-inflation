@@ -3,6 +3,7 @@
 import { createFoods } from "@/lib/actions/foods";
 import { ExportExcel, importExcel } from "@/lib/excel";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ type excelValues = z.infer<typeof excelSchema.element>;
 
 export function FoodImportButton() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<formValues>({
     resolver: zodResolver(formSchema),
@@ -61,6 +63,7 @@ export function FoodImportButton() {
       await createFoods(result.data);
 
       toast.success("Success");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error("Error", { description: error.message });
