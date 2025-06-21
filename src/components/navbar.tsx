@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 export function Navbar() {
   const { data: session } = useSession();
   const pathName = usePathname();
-  if (pathName != "/") return;
+  if (pathName != "/") return null;
   return (
     <nav className="top-0 z-50 mx-auto flex min-h-20 w-full items-center justify-between px-10">
       <Link href="/" className="text-xl font-bold text-primary">
