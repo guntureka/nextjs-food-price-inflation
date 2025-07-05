@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm drizzle-kit push && next build",
-    "start": "next start",
+    "build": "next build",
+    "start": "pnpm drizzle-kit push && next start",
     "lint": "next lint"
   },
   "dependencies": {
