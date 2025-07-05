@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  food-price-app:
+  nextjs-app:
     build:
       context: .
       dockerfile: Dockerfile
