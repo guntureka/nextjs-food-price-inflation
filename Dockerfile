@@ -3,22 +3,21 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies terlebih dahulu
-COPY package.json package-lock.json* pnpm-lock.yaml* ./
+# Install dependencies
+COPY package.json pnpm-lock.yaml* ./
 RUN npm install -g pnpm && pnpm install
 
 # Copy semua kode
 COPY . .
 
-# Build Next.js untuk production
+# Build Next.js
 RUN pnpm run build
 
-# 2. Base image untuk production (lebih ringan)
+# 2. Base image untuk production
 FROM node:22-alpine AS runner
 
 WORKDIR /app
 
-# Hanya copy file build dan dependency production
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
@@ -30,5 +29,4 @@ ENV PORT=3001
 
 EXPOSE 3001
 
-# Jalankan Next.js
 CMD ["pnpm", "start"]
