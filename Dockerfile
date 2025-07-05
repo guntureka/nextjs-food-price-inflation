@@ -31,4 +31,4 @@ ENV PORT=3001
 EXPOSE 3001
 
 # Jalankan Next.js
-CMD ["next", "start"]
+CMD ["pnpm", "start"]
