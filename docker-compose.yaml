@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   nextjs-app:
-    container_name: nextjs-app
+    container_name: food-price-app
     build: .
     ports:
       - 3001
@@ -11,7 +11,7 @@ services:
     networks:
       - dokploy-network
   db:
-    container_name: postgres
+    container_name: food-price-postgres
     image: postgres:16
     restart: always
     environment:
