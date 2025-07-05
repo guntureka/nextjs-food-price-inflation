@@ -18,8 +18,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db_food_price_inflation
-    ports:
-      - 5435
+    # ports:
+    #   - 5435
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
